@@ -1,0 +1,14 @@
+{
+  "name": "ejercicio-nodejs-1",
+  "version": "1.0.0",
+  "description": "Ejercicio 1 node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ignacio Martín-Peña Chinchurreta",
+  "license": "ISC",
+  "dependencies": {
+    "os-utils": "^0.0.14"
+  }
+}
