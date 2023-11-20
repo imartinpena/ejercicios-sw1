@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<%- include("header", {}) %>
+<h1><%= title %></h1>
+<form method="post" action="/login">
+    <div class="row mb-3">
+        <label class="col-form-label col-sm-1 me-5" for="user_text">Usuario:</label>
+        <div class="col-3">
+            <input class="form-control" id="user_text" type="text" name="user">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label class="col-form-label col-sm-1 me-5" for="password_text">Contrasenna:</label>
+        <div class="col-3">
+            <input class="form-control" id="password_text" type="password" name="password">
+
+        </div>
+    </div>
+    <button class="btn btn-primary mb-3" type="submit">Entrar</button>
+</form>
+<%- include("footer", {}) %>
