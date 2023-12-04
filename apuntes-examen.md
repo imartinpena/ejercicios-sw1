@@ -49,7 +49,7 @@ const registroRouter = require('./routes/registro');
 app.use('/registro', registroRouter);
 
 // Crear formulario de registro (registro ejs)
-(copiamos codigo de login.ejs que va a ser parecido)
+(copiamos codigo de login.ejs que va a ser parecido y añadir nuevos elementos)
 
 <%- include("header", {}) %>
 <h1>Login</h1>
@@ -62,3 +62,5 @@ app.use('/registro', registroRouter);
     <button type="submit">Submit</button>
 </form>
 <%- include("footer", {}) %>
+
+
