@@ -1,9 +1,15 @@
 # CHULETARIO SISTEMAS WEB I
 
-## Como arrancar un proyecto nuevo:
+## Arrancar proyecto
 
 ```
 npm install
+npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan
+npm audit fix
+npm audit fix --force
+npm fund
+npm start
+
 ```
 
 // instalar node.js, utilizar navegador para acceder a node.js y descargar ultima version
