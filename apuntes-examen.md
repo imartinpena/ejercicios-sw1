@@ -1,7 +1,6 @@
 # CHULETARIO SISTEMAS WEB I
 
 ## Crear proyecto nuevo desde cero 
-Sin express o con express
 
 ```
 node -v
