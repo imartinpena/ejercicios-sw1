@@ -1,4 +1,4 @@
-// Crear proyecto NODE.JS desde cero
+# CHULETARIO SW1
 
 // instalar node.js, utilizar navegador para acceder a node.js y descargar ultima version
 para comprobar que hemos instalado node correctamente
