@@ -1,0 +1,34 @@
+<html>
+    <head></head>
+    <body>
+        <ul id="messages"></ul>
+        <form id="form">
+            <input type="text" id="message_box" placeholder="Start typing...">
+            <button>Send</button>
+        </form>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io();
+            const form = document.getElementById("form");
+            const input = document.getElementById("message_box");
+            const chat = document.getElementById("messages");
+
+            form.addEventListener("submit", function(e) {
+                e.preventDefault(); // Impedimos que se ejecute el comportamiento por defecto del form
+                
+                if (input.value) {
+                    socket.emit("chat", input.value);
+                    input.value = "";
+                }
+            });
+
+            // Al recibir un mensaje del servidor, se añade a la lista
+            socket.on("chat", (msg) => {
+                const item = document.createElement("li");
+                item.textContent = msg;
+                chat.appendChild(item);
+            });
+        </script>
+    </body>
+</html>
