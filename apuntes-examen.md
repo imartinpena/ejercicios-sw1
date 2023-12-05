@@ -1,5 +1,18 @@
 # CHULETARIO SISTEMAS WEB I
 
+## Crear proyecto nuevo desde cero 
+Sin express o con express
+
+```
+node -v
+mkdir nombre_carpeta
+npm init -y
+express --ejs
+express --ejs nombre_fichero_main.js 
+
+```
+
+
 ## Arrancar proyecto
 
 ```
