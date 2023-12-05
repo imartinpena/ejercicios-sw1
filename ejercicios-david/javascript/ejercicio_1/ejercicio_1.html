@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>Ejercicio 1</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <style>
+            body {
+                background-color: lightgray;
+                height: 100vh;
+            }
+            div.container {
+                height: 100vh;
+            }
+            div.container > div {
+                background-color: white;
+            }
+            div.container > div > h1{
+                text-align: center;
+            }
+            p > span {
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container d-flex align-items-center justify-content-center">
+            <div class="p-5 w-75 rounded align-self-center">
+                <h1>Generador de Contraseñas</h1>
+                <hr>
+                <form>
+                    <div class="mb-1">
+                        <label>Número de palabras (1-10): </label>
+                        <input type="text" id ="num_palabras" placeholder="4">
+                    </div>
+                    <label>Opciones:</label>
+                    <div class="mb-3 col">
+                        <div>
+                            <input type="checkbox" id="check_colores" checked>
+                            <label>Mostrar cada palabra de un color</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="check_mayusculas" checked>
+                            <label>Empezar palabras con mayúscula</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="check_repetir">
+                            <label>Repetir palabras</label>
+                        </div>
+                    </div>
+                    <button id="boton_generar" type="button" class="btn btn-primary mb-3">Generar Contraseña</button>
+                </form>
+                <div id="alert_error" class="alert alert-danger" role="alert">
+                    <strong>Error</strong>: el número de palabras debe estar entre 1 y 10
+                </div>
+                <div id="alert_info" class="alert alert-primary" role="alert">
+                    <strong>Nota</strong>: pese a que se permita la repecición de palabras, el diccionario empleado
+                    consta de 646616 entradas, por lo que la probabilidad de que una palabra se 
+                    repita es muy baja (&approx; 0.00015%).
+                </div>
+                <span id="pass_spot"></span>
+            </div>
+        </div>
+    </body>
+    <script src="./ejercicio_1.js"></script>
+</html>

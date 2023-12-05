@@ -1,0 +1,45 @@
+.nav-link {
+    color: white;
+}
+.nav-link:hover {
+    background-color: rgb(175, 0, 0);
+    color: white;
+}
+nav {
+    border-style: solid;
+    border-color: darkkhaki;
+    border-width: 0.1em;
+    background-color: darkred;
+    color: white;
+}
+div.menu {
+    padding: 0;
+    background-color: darkred;
+    border-style: solid;
+    border-width: 0.1em;
+    border-top: 0em;
+    border-color: darkkhaki;
+}
+strong {
+    color: darkred;
+}
+.btn {
+    color: white;
+    background-color: darkkhaki;
+    width: 7em !important;
+}
+.btn:focus {
+    color:white;
+    background-color: rgb(114, 111, 64) !important;
+}
+.btn:hover {
+    color:white;
+    background-color: rgb(114, 111, 64) !important;
+}
+#sign-up-form-div {
+    background-color: white;
+    width: 50vw;
+}
+#finished-div {
+    background-color: white;
+}
