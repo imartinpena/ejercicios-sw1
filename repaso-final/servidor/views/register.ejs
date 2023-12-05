@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body class="pagina-dialogo">
+    <div class="dialog container w-50 p-4 rounded">
+        <h1>Registro</h1>
+        <hr>
+        <form id="register-form" action="/register" method="post">
+            <div class="mb-3">
+                <label form="login-form" for="user-input" class="form-label">Usuario:</label>
+                <input id="user-input" name="username" type="text" class="form-control" placeholder="Nombre" required>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                  <label form="login-form" for="password-input" class="form-label">Contraseña:</label>
+                  <input id="password-input" name="password" type="password" class="form-control" required>
+                </div>
+                <div class="mb-3 col">
+                  <label form="login-form" for="repeat-password-input" class="form-label">Repita la Contraseña:</label>
+                  <input id="repeat-password-input" name="repeatPassword" type="password" class="form-control" required>
+                </div>
+            </div>
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">Registrarse</button>
+            </div>
+        </form>
+        <div class="d-flex justify-content-center">
+          <a href="/register">¿Ya tienes cuenta? Inicia sesión aquí</a>
+        </div>
+    </div>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="javascripts/register.js"></script>
+</html>

@@ -1,0 +1,38 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+body.pagina-dialogo {
+  background-color: darkred;
+}
+
+div.dialog {
+  background-color: white;
+}
+
+/* Sobreescribimos los estilos predeterminados para los botones de bootstrap */
+.btn-primary {
+  color: white;
+  background-color: rgb(199, 0, 0);
+  border-style: solid;
+  border-color: darkred;
+}
+
+.btn-primary:hover {
+  color: white;
+  background-color: rgb(255, 0, 0);
+  border-style: solid;
+  border-color: darkred;
+}
+
+.btn-primary:active {
+  color: white;
+  background-color: rgb(165, 0, 0) !important;
+  border-style: solid !important;
+  border-color: darkred !important;
+}
