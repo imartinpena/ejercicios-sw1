@@ -2,9 +2,9 @@
 
 ## Como arrancar un proyecto nuevo:
 
-'''
+```
 npm install
-'''
+```
 
 // instalar node.js, utilizar navegador para acceder a node.js y descargar ultima version
 para comprobar que hemos instalado node correctamente
