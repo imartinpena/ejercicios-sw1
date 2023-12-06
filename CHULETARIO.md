@@ -76,6 +76,16 @@ vi views/registro.ejs
 ```
 ```
 
+5º Paso: añadir en la barra de navegacion la opcion de registro
+```
+vi /views/header.ejs
+// Debajo de login
+<li class="nav-item">
+    <a class="nav-link" href="/registro">Registro</a>
+</li>
+```
+
+
 
 
 
