@@ -8,9 +8,7 @@ mkdir nombre_carpeta
 npm init -y
 express --ejs
 express --ejs nombre_fichero_main.js 
-
 ```
-
 
 ## Arrancar proyecto
 
@@ -21,33 +19,18 @@ npm audit fix
 npm audit fix --force
 npm fund
 npm start
-
 ```
 
-// instalar node.js, utilizar navegador para acceder a node.js y descargar ultima version
-para comprobar que hemos instalado node correctamente
-node -v
-
-// creamos carpeta vacia
-mkdir nombre_carpeta
-
-// Crear proyecto de node por defecto
-npm init -y
-
-// te crea un fichero de configuracion package.json
+## Añadir script para iniciar proyecto con npm start 
+```
 vi package.json
-
-// Instalar librerias necesarias, solucionar errores y añadir dependencia al proyecto
-npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan
-npm audit fix
-npm audit fix --force
-npm fund
-
-// Añadir script para iniciar proyecto lo añadimos en el fichero package.json debajo de la linea private
-vi package.json
+// Debajo de la linea private
 "scripts": {
     "start": "node ./bin/www"
   },
+```
+
+
 
 // Indicar donde se encuentra el fichero main del proyecto
 vi package.json
