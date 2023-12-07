@@ -8,9 +8,7 @@ mkdir nombre_carpeta
 npm init -y
 express --ejs
 express --ejs nombre_fichero_main.js 
-
 ```
-
 
 ## Arrancar proyecto
 
@@ -21,60 +19,47 @@ npm audit fix
 npm audit fix --force
 npm fund
 npm start
-
 ```
 
-// instalar node.js, utilizar navegador para acceder a node.js y descargar ultima version
-para comprobar que hemos instalado node correctamente
-node -v
-
-// creamos carpeta vacia
-mkdir nombre_carpeta
-
-// Crear proyecto de node por defecto
-npm init -y
-
-// te crea un fichero de configuracion package.json
+## Añadir script para iniciar proyecto con npm start 
+```
 vi package.json
-
-// Instalar librerias necesarias, solucionar errores y añadir dependencia al proyecto
-npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan
-npm audit fix
-npm audit fix --force
-npm fund
-
-// Añadir script para iniciar proyecto lo añadimos en el fichero package.json debajo de la linea private
-vi package.json
+// Debajo de la linea private
 "scripts": {
     "start": "node ./bin/www"
   },
+```
 
-// Indicar donde se encuentra el fichero main del proyecto
+## Indicar donde se encuentra el fichero main del proyecto
+```
 vi package.json
 "main": "app.js",
+```
 
-// Para cambiar el puerto ir al fichero bin/www
+## Para cambiar el puerto 
+```
 vi bin/www
 // Buscar la linea -> var port = normalizePort(process.env.PORT || '3000');
 // Por ejemplo si queremos cambiar el puerto a 4000 seria asi:
-vi bin/www
 var port = normalizePort(process.env.PORT || '4000');
+```
 
-// CREACION DEL SERVIDOR (app.js)
-// Es el fichero principal que levanta nuestro servidor en clase suele ser app.js
-
-// Para añadir nuevas paginas a un proyecto (app.js)
-(crear ficheros) -> views/registro.ejs routes/registro.js
+## Para añadir nuevas paginas a un proyecto 
+1º Paso: Crear ficheros .js y ejs
+```
 vi views/registro.ejs
 vi routes/registro.js
-
-(cargar rutas)
+```
+2º Paso: cargar rutas.
+```
+vi app.js
 const registroRouter = require('./routes/registro');
 app.use('/registro', registroRouter);
-
-// Crear formulario de registro (registro ejs)
-(copiamos codigo de login.ejs que va a ser parecido y añadir nuevos elementos)
-
+```
+3º Paso: crear codigo HTML para página de registro (registro ejs)
+```
+// copiamos codigo de login.ejs que va a ser parecido y añadir nuevos elementos
+vi views/registro.ejs
 <%- include("header", {}) %>
 <h1>Login</h1>
 // Cambiamos ruta de login a registro
@@ -86,5 +71,22 @@ app.use('/registro', registroRouter);
     <button type="submit">Submit</button>
 </form>
 <%- include("footer", {}) %>
+```
+4º Paso: creamos get post (registro.js)
+```
+```
+
+5º Paso: añadir en la barra de navegacion la opcion de registro
+```
+vi /views/header.ejs
+// Debajo de login
+<li class="nav-item">
+    <a class="nav-link" href="/registro">Registro</a>
+</li>
+```
+
+
+
+
 
 
