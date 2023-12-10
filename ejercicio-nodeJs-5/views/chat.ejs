@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <style>
+        div.message {
+            padding-top: 1vh;
+            padding-bottom: 1vh;
+            padding-left: 2vw;
+            padding-right: 2vw;
+            margin-bottom: 2vh;
+
+            border-style: solid;
+            border-width: 1px;
+        }
+        div.message > p {
+            margin: 0 !important;
+        }
+        div.message > p.sender {
+            font-weight: bold;
+        }
+    </style>
+</head>
+  <body style="background-color: lightgray; height: 100vh;">
+    <div class="d-flex flex-column justify-content-center align-items-center h-100">
+        <div class="w-75 h-100 rounded" style="background-color: white;">
+            <div class="ps-5 pt-3 pe-5">
+                <h1><%= title %></h1>
+                <hr>
+            </div>
+            <div id="chat" class="h-75 ps-5 pe-5 overflow-auto"></div>
+            <div class="ps-5 pe-5 pt-2 pb-1 mb-5 rounded" style="background-color: white;">
+                <form id="message-form">
+                    <div class="mb-3 row">
+                        <div class="col-10">
+                            <input id="message-input" class="form-control" type="text" placeholder="Start typing...">
+                        </div>
+                        <div class="col-1">
+                            <button id="send-button" class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById("message-form");
+        const input = document.getElementById("message-input");
+        const chat = document.getElementById("chat");
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            if (input.value) {
+                socket.emit("<%= chat %>", {sender: "<%= user %>", message: input.value});
+                input.value = "";
+            }
+        });
+
+        socket.on("<%= chat %>", (msg) => {
+            const div = document.createElement("div");
+            div.classList.add("message");
+            div.classList.add("rounded");
+
+            const p_sender = document.createElement("p");
+            p_sender.classList.add("sender");
+            p_sender.textContent = msg.sender;
+
+            const p_message = document.createElement("p");
+            p_message.classList.add("content");
+            p_message.textContent = msg.message;
+
+            div.appendChild(p_sender);
+            div.appendChild(p_message);
+
+            chat.appendChild(div);
+
+            chat.scrollTo(0, chat.scrollHeight)
+        });
+    </script>
+  </body>
+</html>
