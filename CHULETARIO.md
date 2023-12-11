@@ -1,17 +1,24 @@
 # SISTEMAS WEB I
 
 ## Crear proyecto nuevo desde cero 
-
 ```
 node -v
 mkdir nombre_carpeta
 npm init -y
-express --ejs
-express --ejs nombre_fichero_main.js 
+```
+
+## Crear proyecto con express generator
+```
+npx express-generator -v ejs "nombre_que_quiero_poner_al_proyecto"
+cd "nombre_que_quiero_poner_al_proyecto"
+npm install
+npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan
+npm audit fix
+npm audit fix --force
+npm fund
 ```
 
 ## Arrancar proyecto
-
 ```
 npm install
 npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan
@@ -188,7 +195,86 @@ vi views/header.ejs
 </body>
 </html>
 ```
+## Para añadir SOCKET.IO a un proyecto.
 
+1º Paso: conectar socket con el servidor (bin/www)
+```
+// Cargar socket arriba del fichero
+const { Server } = require("socket.io");
+
+// Añadir siguiente codigo debajo de la linea: 
+// Create HTTP server.
+// var server = http.createServer(app);
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('chat', (msg)=>{
+    io.emit('chat', msg);
+  })
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+```
+2º Paso: añadir javascript crear fichero chat.js (public/javascripts/chat.js)
+```
+const socket = io();
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const messages = document.getElementById("messages");
+
+form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(input.value){
+        socket.emit("chat",input.value);
+        input.value = "";
+    }
+});
+socket.on("chat", (msg) =>{
+    const item = document.createElement("li");
+    item.textContent = msg;
+    messages.appendChild(item);
+    window.scrollTo(0,document.body.scrollHeight);
+});
+```
+3º Paso: cargar pagina chat (app.js)
+```
+// cada linea de codigo en su correspondiente lugar
+var chatRouter = require('./routes/chat');
+app.use('/chat', chatRouter);
+```
+4º Paso: añadir fichero chat.js (routes/chat.js)
+```
+var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('chat', { title: 'Express' });
+});
+
+module.exports = router;
+```
+5º Paso: añadir fichero chat.ejs (views/chat.ejs)
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/chat.css' />
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="/javascripts/chat.js" defer></script>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form">
+        <input id="input">
+        <button>Send</button>
+    </form>
+  </body>
+</html>
+```
 
 
 
