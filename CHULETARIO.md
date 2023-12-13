@@ -1,5 +1,30 @@
 # SISTEMAS WEB I
 
+## Credenciales 
+```
+i.martinpena
+
+i.martinpena@usp.ceu.es
+
+NI
+```
+
+
+## Configuración GIT
+1º Paso: configuración
+```
+git config --global user.name "i.martinpena"
+git config --global user.email i.martinpena@usp.ceu.es
+```
+2º Paso: commit 
+```
+git commit -am "comentarios"
+```
+3º Paso: push
+```
+git push
+```
+
 ## Crear proyecto nuevo desde cero 
 ```
 node -v
