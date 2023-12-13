@@ -12,7 +12,7 @@ npm init -y
 npx express-generator -v ejs "nombre_que_quiero_poner_al_proyecto"
 cd "nombre_que_quiero_poner_al_proyecto"
 npm install
-npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan winston sequelize sqlite3
+npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan winston sequelize sqlite3 socket.io
 npm audit fix
 npm audit fix --force
 npm fund
@@ -21,7 +21,7 @@ npm fund
 ## Arrancar proyecto
 ```
 npm install
-npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan winston sequelize sqlite3
+npm i bcrypt cookie-parser debug ejs express express-session http-errors morgan winston sequelize sqlite3 socket.io
 npm audit fix
 npm audit fix --force
 npm fund
