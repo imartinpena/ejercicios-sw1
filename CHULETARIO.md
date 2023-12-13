@@ -275,7 +275,28 @@ module.exports = router;
   </body>
 </html>
 ```
-
+6º Paso: añadir css chat.css, para poner bonito el chat (public/stylesheets/chat.css)
+```
+form{
+    background: lightgray;
+    padding: 5px;
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+}
+#input{
+    flex-grow: 1;
+}
+#messages{
+    list-style-type: none;
+}
+#messages > li:nth-child(odd){
+    background: lightblue;
+}
+```
 
 
 
