@@ -53,28 +53,34 @@ npm fund
 npm start
 ```
 
-## Añadir script para iniciar proyecto con npm start 
+## Añadir script para iniciar proyecto con npm start (package.json)
 ```
-vi package.json
 // Debajo de la linea private
 "scripts": {
     "start": "node ./bin/www"
   },
 ```
 
-## Indicar donde se encuentra el fichero main del proyecto
+## Indicar donde se encuentra el fichero main del proyecto (package.json)
 ```
 vi package.json
 "main": "app.js",
 ```
 
-## Para cambiar el puerto 
+## Para cambiar el puerto (bin/www)
 ```
 vi bin/www
 // Buscar la linea -> var port = normalizePort(process.env.PORT || '3000');
 // Por ejemplo si queremos cambiar el puerto a 4000 seria asi:
 var port = normalizePort(process.env.PORT || '4000');
 ```
+
+## Indicar puerto al levantar proyecto port=3010 npm start (bin/www)
+```
+const port = process.env.PORT;
+app.listen(port);
+```
+
 
 ## Para añadir nuevas paginas (REGISTRO) a un proyecto 
 1º Paso: Crear ficheros .js y ejs
