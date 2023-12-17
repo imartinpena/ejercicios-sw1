@@ -81,6 +81,22 @@ const port = process.env.PORT;
 app.listen(port);
 ```
 
+## Estructura codigo HTML simple
+```
+<!DOCTYPE html >
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="title" content="Mi primer HTML5">
+    <meta name="description" content="Ejemplo de HTML5">
+    <meta name="keywords" content="HTML5, CSS, Javascript">
+    <title>Mi primer HTML5</title>
+  </head>
+  <body>
+    Cuerpo de la página
+  </body>
+</html>
+```
 
 ## Para añadir nuevas paginas (REGISTRO) a un proyecto 
 1º Paso: Crear ficheros .js y ejs
@@ -226,6 +242,7 @@ vi views/header.ejs
 </body>
 </html>
 ```
+
 ## Para añadir SOCKET.IO a un proyecto.
 
 1º Paso: conectar socket con el servidor (bin/www)
@@ -329,6 +346,70 @@ form{
 }
 ```
 
+## Crear una pagina (usuarios) con una tabla dinamica donde se muestren los usuarios
+
+1º Paso: Crear ficheros .js y ejs
+```
+vi views/usuarios.ejs
+vi routes/usuarios.js
+```
+2º Paso: cargar rutas.
+```
+vi app.js
+const usuariosRouter = require('./routes/usuarios');
+app.use('/usuarios', usuariosRouter);
+```
+3º Paso: crear funcion para obtener usuarios. (users.js)
+```
+// Encima de register
+users.getAllUsers = function() {
+    return Object.values(users);
+}
+```
+
+4º Paso: crear codigo HTML para página de usuarios (usuarios.ejs)
+```
+<%- include("header", {}) %>
+<h1><%= title %></h1>
+<table>
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Password (Hashed)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% allUsers.forEach(function(user) { %>
+        <tr>
+            <td><%= user.username %></td>
+            <td><%= user.hash %></td>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+<%- include("footer", {}) %>
+```
+5º Paso: Crear funcionalidad de usuarios (usuarios.js)
+```
+const express = require('express');
+const router = express.Router();
+const users = require('../users');
+
+router.get('/', function(req, res, next) {
+    const allUsers = users.getAllUsers();
+    res.render('usuarios', { title: 'Usuarios', allUsers, user: req.session.user });
+});
+
+module.exports = router;
+```
+6º Paso: añadir en la barra de navegacion la opcion de usuarios (header.ejs)
+```
+vi views/header.ejs
+// Debajo de logout
+<li class="nav-item">
+  <a class="nav-link" href="/usuarios">Usuarios</a>
+</li>
+```
 
 
 
