@@ -379,12 +379,12 @@ users.getAllUsers = function() {
     </tr>
     </thead>
     <tbody>
-    <% allUsers.forEach(function(user) { %>
+    <% for (let i = 0; i < allUsers.length; i++) { %>
         <tr>
-            <td><%= user.username %></td>
-            <td><%= user.hash %></td>
+            <td><%= allUsers[i].username %></td>
+            <td><%= allUsers[i].hash %></td>
         </tr>
-    <% }); %>
+    <% } %>
     </tbody>
 </table>
 <%- include("footer", {}) %>
@@ -410,6 +410,9 @@ vi views/header.ejs
   <a class="nav-link" href="/usuarios">Usuarios</a>
 </li>
 ```
+
+## Añadir a la pagina usuarios una columna nueva donde se le añada un boton para que unicamente el usuario admin pueda eliminar usuarios.
+
 
 
 
