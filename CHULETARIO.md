@@ -413,6 +413,133 @@ vi views/header.ejs
 
 ## Añadir a la pagina usuarios una columna nueva donde se le añada un boton para que unicamente el usuario admin pueda eliminar usuarios.
 
+1º Paso: crear funcion para eliminar usuarios. (users.js)
+```
+// Debajo de register
+users.deleteUser = function(username) {
+    return new Promise((resolve, reject) => {
+        if (users[username]) {
+            delete users[username];
+            resolve();
+        } else {
+            reject(new Error(`Usuario ${username} no encontrado`));
+        }
+    });
+};
+```
+2º Paso: crear fichero para alerta de confirmacion para eliminar usuario (/public/deleteUser.js)
+```
+// vi /public/deleteUser.js
+const form = document.getElementById('form')
+
+form.addEventListener('submit', (event) => {
+    if(!deleteUser(username)){
+        event.preventDefault();
+    }
+});
+function deleteUser(username) {
+    if (confirm(`¿Estás seguro de que deseas eliminar al usuario ${username}?`)) {
+        fetch(`/usuarios/deleteUser?username=${username}`, { method: 'DELETE' })
+            .then(response => {
+                if (response.ok) {
+                    // Puedes recargar la página o actualizar la tabla según tus necesidades
+                    location.reload();
+                } else {
+                    console.error('Error al eliminar el usuario');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+}
+```
+
+
+3º Paso: crear codigo HTML para página de usuarios (usuarios.ejs)
+```
+// Borrar contenido y pegar todo lo siguiente
+<%- include("header", {}) %>
+<h1><%= title %></h1>
+<table>
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Password (Hashed)</th>
+        <% if (user.username === 'admin') { %>
+            <th>Action</th>
+        <% } else if (user.username !== 'admin') { %>
+            <th></th>
+        <% } %>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (let i = 0; i < allUsers.length; i++) { %>
+        <tr>
+            <td><%= allUsers[i].username %></td>
+            <td><%= allUsers[i].hash %></td>
+            <% if (user.username === 'admin') { %>
+            <td>
+                <% if (allUsers[i].username !== 'admin' && allUsers[i].username !== undefined) { %>
+                    <button type="submit" class="delete-button" onclick="deleteUser('<%= allUsers[i].username %>')">Delete</button>
+                <% } %>
+            </td>
+            <% } else { %>
+                <td></td>
+            <% } %>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+<script type="text/javascript" src="/deleteUser.js"></script>
+<%- include("footer", {}) %>
+```
+4º Paso: Crear nueva funcionalidad de usuarios (usuarios.js)
+```
+// Borrar contenido y pegar todo lo siguiente
+const express = require('express');
+const router = express.Router();
+const users = require('../users');
+
+router.get('/', function(req, res, next) {
+    const allUsers = users.getAllUsers();
+    const currentUser = req.session.user;
+    res.render('usuarios', { title: 'Usuarios', currentUser, allUsers, user: req.session.user});
+});
+
+router.post('/deleteUser', async function(req, res, next) {
+    const currentUser = req.session.user;
+    const usernameToDelete = req.body.username;
+
+    try {
+        if (currentUser && currentUser.username === 'admin' && usernameToDelete) {
+            await users.deleteUser(usernameToDelete);
+            res.redirect('/usuarios');
+        } else {
+            res.status(403).send('Forbidden');
+        }
+    } catch (error) {
+        res.status(500).send(`Error al eliminar usuario: ${error.message}`);
+    }
+});
+
+router.delete('/deleteUser', async function(req, res, next) {
+    const currentUser = req.session.user;
+    const usernameToDelete = req.query.username;
+
+    try {
+        if (currentUser && currentUser.username === 'admin' && usernameToDelete) {
+            await users.deleteUser(usernameToDelete);
+            res.json({ success: true, message: `Usuario ${usernameToDelete} eliminado correctamente.` });
+        } else {
+            res.status(403).json({ success: false, message: 'Forbidden' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: `Error al eliminar usuario: ${error.message}` });
+    }
+});
+
+module.exports = router;
+```
+
 
 
 
