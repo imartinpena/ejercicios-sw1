@@ -358,11 +358,17 @@ vi app.js
 const usuariosRouter = require('./routes/usuarios');
 app.use('/usuarios', usuariosRouter);
 ```
-3º Paso: crear funcion para obtener usuarios. (users.js)
+3Aº Paso: crear funcion para obtener usuarios. (users.js)
 ```
 // Encima de register
 users.getAllUsers = function() {
     return Object.values(users);
+}
+```
+3Bº Paso: crear funcion para obtener usuarios. (/database/models/user.model.js)
+```
+users.getAllUsers = function() {
+    return Object.values(users.data);
 }
 ```
 
@@ -388,7 +394,7 @@ users.getAllUsers = function() {
 </table>
 <%- include("footer", {}) %>
 ```
-5º Paso: Crear funcionalidad de usuarios (usuarios.js)
+5Aº Paso: Crear funcionalidad de usuarios (usuarios.js)
 ```
 const express = require('express');
 const router = express.Router();
@@ -401,6 +407,21 @@ router.get('/', function(req, res, next) {
 
 module.exports = router;
 ```
+
+5Bº Paso: Crear funcionalidad de usuarios (usuarios.js)
+```
+const express = require('express');
+const router = express.Router();
+const database = require('../database');
+
+router.get('/', function(req, res, next) {
+    const allUsers = database.user.getAllUsers();
+    res.render('usuarios', { title: 'Usuarios', allUsers, user: req.session.user });
+});
+
+module.exports = router;
+```
+
 6º Paso: añadir en la barra de navegacion la opcion de usuarios (header.ejs)
 ```
 vi views/header.ejs
