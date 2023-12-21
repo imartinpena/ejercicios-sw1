@@ -72,7 +72,7 @@ vi package.json
 vi bin/www
 // Buscar la linea -> var port = normalizePort(process.env.PORT || '3000');
 // Por ejemplo si queremos cambiar el puerto a 4000 seria asi:
-var port = normalizePort(process.env.PORT || '4000');
+var port = normalizePort(process.env.PORT || process.argv[2] || '4000');
 ```
 
 ## Indicar puerto al levantar proyecto port=3010 npm start (bin/www)
