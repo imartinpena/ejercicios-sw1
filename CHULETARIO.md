@@ -6,9 +6,8 @@ i.martinpena
 
 i.martinpena@usp.ceu.es
 
-NI
+NI: 105462
 ```
-
 
 ## Configuración GIT
 1º Paso: configuración
@@ -433,7 +432,7 @@ vi views/header.ejs
 
 ## Añadir a la pagina usuarios una columna nueva donde se le añada un boton para que unicamente el usuario admin pueda eliminar usuarios.
 
-1º Paso: crear funcion para eliminar usuarios. (users.js)
+1Aº Paso: crear funcion para eliminar usuarios. (users.js)
 ```
 // Debajo de register
 users.deleteUser = function(username) {
@@ -447,6 +446,20 @@ users.deleteUser = function(username) {
     });
 };
 ```
+1Bº Paso: crear funcion para eliminar usuarios. (/database/models/user.model.js)
+```
+users.deleteUser = function(username) {
+    return new Promise((resolve, reject) => {
+        if (users.data[username]) {
+            delete users.data[username];
+            resolve();
+        } else {
+            reject(new Error(`Usuario ${username} no encontrado`));
+        }
+    });
+};
+```
+
 2º Paso: crear fichero para alerta de confirmacion para eliminar usuario (/public/deleteUser.js)
 ```
 // vi /public/deleteUser.js
@@ -472,8 +485,6 @@ function deleteUser(username) {
     }
 }
 ```
-
-
 3º Paso: crear codigo HTML para página de usuarios (usuarios.ejs)
 ```
 // Borrar contenido y pegar todo lo siguiente
@@ -512,7 +523,7 @@ function deleteUser(username) {
 <script type="text/javascript" src="/deleteUser.js"></script>
 <%- include("footer", {}) %>
 ```
-4º Paso: Crear nueva funcionalidad de usuarios (usuarios.js)
+4Aº Paso: Crear nueva funcionalidad de usuarios (usuarios.js)
 ```
 // Borrar contenido y pegar todo lo siguiente
 const express = require('express');
@@ -559,6 +570,54 @@ router.delete('/deleteUser', async function(req, res, next) {
 
 module.exports = router;
 ```
+
+4Bº Paso: Crear nueva funcionalidad de usuarios (usuarios.js)
+```
+const express = require('express');
+const router = express.Router();
+const database = require('../database');
+
+router.get('/', function(req, res, next) {
+    const allUsers = database.user.getAllUsers();
+    const currentUser = req.session.user;
+    res.render('usuarios', { title: 'Usuarios', currentUser, allUsers, user: req.session.user });
+});
+
+router.post('/deleteUser', async function(req, res, next) {
+    const currentUser = req.session.user;
+    const usernameToDelete = req.body.username;
+
+    try {
+        if (currentUser && currentUser.username === 'admin' && usernameToDelete) {
+            await database.user.deleteUser(usernameToDelete);
+            res.redirect('/usuarios');
+        } else {
+            res.status(403).send('Forbidden');
+        }
+    } catch (error) {
+        res.status(500).send(`Error al eliminar usuario: ${error.message}`);
+    }
+});
+
+router.delete('/deleteUser', async function(req, res, next) {
+    const currentUser = req.session.user;
+    const usernameToDelete = req.query.username;
+
+    try {
+        if (currentUser && currentUser.username === 'admin' && usernameToDelete) {
+            await database.user.deleteUser(usernameToDelete);
+            res.json({ success: true, message: `Usuario ${usernameToDelete} eliminado correctamente.` });
+        } else {
+            res.status(403).json({ success: false, message: 'Forbidden' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: `Error al eliminar usuario: ${error.message}` });
+    }
+});
+
+module.exports = router;
+```
+
 
 
 
