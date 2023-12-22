@@ -74,9 +74,12 @@ vi bin/www
 var port = normalizePort(process.env.PORT || process.argv[2] || '4000');
 ```
 
-## Indicar puerto al levantar proyecto port=3010 npm start (bin/www)
+## Indicar puerto al levantar proyecto PORT=3200 npm start (bin/www)
 ```
-const port = process.env.port;
+let port = normalizePort("3000");
+if(process.env.PORT) {
+    port = normalizePort(process.env.PORT)
+}
 ```
 
 ## Estructura codigo HTML simple
@@ -617,6 +620,19 @@ router.delete('/deleteUser', async function(req, res, next) {
 
 module.exports = router;
 ```
+## Funcion middleware
+```
+app.use('/restricted', restricted, restrictedRouter);
+
+function restricted(req, res, next){
+  if(req.session.user){
+    next();
+  } else {
+    res.redirect("login");
+  }
+}
+```
+
 
 
 
