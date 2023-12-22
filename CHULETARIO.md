@@ -1,5 +1,7 @@
 # SISTEMAS WEB I
 
+https://github.com/bereilhp/web/tree/main/web1
+
 ## Credenciales 
 ```
 i.martinpena
@@ -633,6 +635,108 @@ function restricted(req, res, next){
   }
 }
 ```
+## Mostrar una tabla dinámica en una página EJS a partir de un JSON
+
+1º Paso: Crea el archivo EJS (pedidos.ejs):
+```
+<!-- pedidos.ejs -->
+<%- include("header", { title: "Pedidos" }) %>
+<h1>Pedidos</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Tamaño</th>
+            <th>Precio</th>
+            <th>Toppings</th>
+            <th>Queso Extra</th>
+            <th>Delivery</th>
+            <th>Cliente</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% for (let i = 0; i < pedidos.length; i++) { %>
+            <tr>
+                <td><%= pedidos[i].tamano %></td>
+                <td><%= pedidos[i].precio %></td>
+                <td><%= pedidos[i].toppings ? pedidos[i].toppings.join(', ') : 'N/A' %></td>
+                <td><%= pedidos[i].queso_extra ? 'Sí' : 'No' %></td>
+                <td><%= pedidos[i].delivery ? 'Sí' : 'No' %></td>
+                <td>
+                    <%= pedidos[i].cliente.nombre %><br>
+                    Teléfono: <%= pedidos[i].cliente.telefono || 'N/A' %><br>
+                    Correo: <%= pedidos[i].cliente.correo || 'N/A' %>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
+<%- include("footer", {}) %>
+```
+
+2º Paso: configurar archivo de rutas (pedidos.js):
+```
+const express = require('express');
+const router = express.Router();
+const pedidosData = require('../database/pedidos.json');
+
+router.get('/', function(req, res, next) {
+    res.render('pedidos', { title: 'Pedidos', pedidos: pedidosData.pedidos });
+});
+
+module.exports = router;
+```
+3º Paso: estructura del archivo JSON (pedidos.json)
+```
+{
+    "pedidos": [
+        {
+            "tamano": "pequeña",
+            "precio": 15.25,
+            "toppings": ["champiñones", "peperoni", "albahaca"],
+            "queso_extra": false,
+            "delivery": true,
+            "cliente": {
+                "nombre": "Pepe Lotas",
+                "telefono": null,
+                "correo": "pepelotas@gmail.com"
+            }
+        },
+        {
+            "tamano": "grande",
+            "precio": 12.43,
+            "toppings": null,
+            "queso_extra": true,
+            "delivery": false,
+            "cliente": {
+                "nombre": "Sara Renovell",
+                "telefono": "6364872023",
+                "correo": null
+            }
+        }
+    ]
+}
+```
+4º Paso: Configura las rutas en tu aplicación principal (app.js)
+```
+const pedidosRouter = require('./routes/pedidos');
+app.use('/pedidos', pedidosRouter);
+```
+
+5º Paso: asegúrate de tener las carpetas y archivos necesarios:
+```
+- views/
+  - pedidos.ejs
+  - header.ejs
+  - footer.ejs
+- routes/
+  - pedidos.js
+- database/
+  - pedidos.json
+- app.js
+- package.json
+```
+
+
 
 
 
