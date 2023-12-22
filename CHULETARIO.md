@@ -76,6 +76,7 @@ var port = normalizePort(process.env.PORT || process.argv[2] || '4000');
 
 ## Indicar puerto al levantar proyecto PORT=3200 npm start (bin/www)
 ```
+// PORT=3200 npm start
 let port = normalizePort("3000");
 if(process.env.PORT) {
     port = normalizePort(process.env.PORT)
