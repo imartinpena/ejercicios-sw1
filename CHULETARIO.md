@@ -179,46 +179,42 @@ vi views/header.ejs
 
 ## Para añadir SOCKET.IO a un proyecto.
 
-1º Paso: conectar socket con el servidor (bin/www)
 ```
-// Cargar socket arriba del fichero
-const { Server } = require("socket.io");
+npm install socket.io
+```
 
-// Añadir siguiente codigo debajo de la linea: 
-// Create HTTP server.
-// var server = http.createServer(app);
-const io = new Server(server);
+
+1º Paso: Aceptar conexiones WebSocket a traves de Socket.io (bin/www)
+```
+// Debajo de var server = http.createServer(app)
+const io = require('socket.io')(server);
+
 io.on('connection', (socket) => {
   console.log('a user connected');
-  socket.on('chat', (msg)=>{
-    io.emit('chat', msg);
-  })
 
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  // Cuando recibas un mensaje 'chat message', lo emitirás a todos los clientes.
+  socket.on('chat message', (data) => {
+    io.emit('chat message', data); // Envía el mensaje y el nombre de usuario a todos los clientes
   });
 });
-```
-2º Paso: añadir javascript crear fichero chat.js (public/javascripts/chat.js)
-```
-const socket = io();
-const form = document.getElementById("form");
-const input = document.getElementById("input");
-const messages = document.getElementById("messages");
 
-form.addEventListener('submit', function(e){
-    e.preventDefault();
-    if(input.value){
-        socket.emit("chat",input.value);
-        input.value = "";
-    }
+
+// Cambiar server.listen por esto:
+server.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
-socket.on("chat", (msg) =>{
-    const item = document.createElement("li");
-    item.textContent = msg;
-    messages.appendChild(item);
-    window.scrollTo(0,document.body.scrollHeight);
-});
+
+```
+2º Paso: añadir al header un boton de chat para que le lleve a la pagina solo cuando este logeado el usuario (views/header.ejs)
+```
+// dentro del head
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+// debajo de logout
+<li class="nav-item">
+    <a class="nav-link" href="/chat">Chat</a>
+</li>
 ```
 3º Paso: cargar pagina chat (app.js)
 ```
@@ -228,55 +224,55 @@ app.use('/chat', chatRouter);
 ```
 4º Paso: añadir fichero chat.js (routes/chat.js)
 ```
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('chat', { title: 'Express' });
+  res.render('chat', {user:req.session.user, username:req.session.user.username});
 });
 
 module.exports = router;
+
 ```
 5º Paso: añadir fichero chat.ejs (views/chat.ejs)
 ```
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/chat.css' />
-    <script src="/socket.io/socket.io.js" defer></script>
-    <script src="/javascripts/chat.js" defer></script>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form id="form">
-        <input id="input">
-        <button>Send</button>
-    </form>
-  </body>
-</html>
+<%- include("header", {}) %>
+<h1>CHAT</h1>
+<ul id="messages"></ul>
+<form id="form" action="" class="chat">
+    <input id="input" autocomplete="off" /><button>Send</button>
+</form>
+<script>
+    $(function () {
+        var socket = io();
+        $('form').submit(function(e) {
+            e.preventDefault(); // previene la recarga de la página
+            socket.emit('chat message', { message: $('#input').val(), username: '<%= username %>' });
+            $('#input').val('');
+            return false;
+        });
+        socket.on('chat message', function(data) {
+            $('#messages').append($('<li>').text(data.username + ': ' + data.message));
+        });
+    });
+</script>
+<%- include("footer", {}) %>
 ```
 6º Paso: añadir css chat.css, para poner bonito el chat (public/stylesheets/chat.css)
 ```
-form{
-    background: lightgray;
-    padding: 5px;
-    position: fixed;
-    display: flex;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
+form.chat{
+  background: lightgray;
+  padding: 5px;
+  position: fixed;
+  display: flex;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
 }
 #input{
-    flex-grow: 1;
-}
-#messages{
-    list-style-type: none;
-}
-#messages > li:nth-child(odd){
-    background: lightblue;
+  flex-grow: 1;
 }
 ```
 
