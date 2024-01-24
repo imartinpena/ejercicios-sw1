@@ -1,5 +1,7 @@
 # SISTEMAS WEB I
 
+https://github.com/bereilhp/web/tree/main/web1
+
 ## Credenciales 
 ```
 i.martinpena
@@ -74,9 +76,13 @@ vi bin/www
 var port = normalizePort(process.env.PORT || process.argv[2] || '4000');
 ```
 
-## Indicar puerto al levantar proyecto port=3010 npm start (bin/www)
+## Indicar puerto al levantar proyecto PORT=3200 npm start (bin/www)
 ```
-const port = process.env.port;
+// PORT=3200 npm start
+let port = normalizePort("3000");
+if(process.env.PORT) {
+    port = normalizePort(process.env.PORT)
+}
 ```
 
 ## Estructura codigo HTML simple
@@ -99,190 +105,116 @@ const port = process.env.port;
 ## Para añadir nuevas paginas (REGISTRO) a un proyecto 
 1º Paso: Crear ficheros .js y ejs
 ```
-vi views/registro.ejs
-vi routes/registro.js
+vi views/register.ejs
+vi routes/register.js
 ```
 2º Paso: cargar rutas.
 ```
 vi app.js
-const registroRouter = require('./routes/registro');
-app.use('/registro', registroRouter);
+const registroRouter = require('./routes/register');
+app.use('/registro', registerRouter);
 ```
-3º Paso: crear codigo HTML para página de registro (registro.ejs)
+3º Paso: crear codigo HTML para página de register y que verifique si las contraseñas son iguales, tiene mas de 8 caracteres(register.ejs)
 ```
-// copiamos codigo de login.ejs que va a ser parecido y añadir nuevos elementos
-vi views/registro.ejs
 <%- include("header", {}) %>
-<h1>Login</h1>
-// Cambiamos ruta de login a registro
-<form method="post" action="/registro">
-    <label>Username: </label> <input type="text" name="user"><br>
-    <label>Password: </label> <input type="password" name="pass"><br>
-    // Añadimos nueva celda para confirmar contraseña
-    <label>Confirm Password: </label> <input type="password" name="confirmPass"><br>
+<h1>Register</h1>
+<form method="post" action="/register" onsubmit="return validateForm()">
+    <label>Username: </label> <input type="text" name="user" required><br>
+    <label>Password: </label> <input type="password" id="pass" name="pass" required><br>
+    <label>Confirm Password: </label> <input type="password" id="confirm_pass" required><br>
     <button type="submit">Submit</button>
 </form>
+<script>
+    function validateForm() {
+        var password = document.getElementById("pass").value;
+        var confirmPassword = document.getElementById("confirm_pass").value;
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return false;
+        }
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long.");
+            return false;
+        }
+        return true;
+    }
+</script>
 <%- include("footer", {}) %>
 ```
-4º Paso: Crear funcionalidad de registro (registro.js)
+4º Paso: Crear funcionalidad de registro (register.js)
 ```
-vi routes/registro.js
 const express = require('express');
 const router = express.Router();
-const users = require('../users');
+const database = require('../database');
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('registro', { title: 'Registro', user: req.session.user});
+    res.render('register', {user: req.session.user});
 });
 
-router.post('/', function(req, res, next){
-    let user = req.body.user;
-    let pass = req.body.pass;
-    let confirmPass = req.body.confirmPass;
-
-    if (pass.length >= 8 && pass === confirmPass) {
-        if(!users[user]){
-            users.register(user, pass, function() {
-                req.session.user = users[user];
-                req.session.message = "Welcome!";
-                res.redirect("/restricted");
-            });
-        } else {
-            req.session.error = "El usuario ya existe";
-            res.redirect("/registro");
-        }
-    } else {
-        req.session.error = "Las constraseñas no coinciden o tiene menos de 8 caracteres";
-        res.redirect("/registro");
-        }
-    });
+router.post('/', async (req, res) => {
+    const user = req.body.user;
+    const pass = req.body.pass;
+    try {
+        await database.user.register(user, pass);
+        req.session.user = {username: user};
+        req.session.message = "¡Registro exitoso!"
+        res.redirect("login");
+    } catch (error) {
+        req.session.error = error.message;
+        res.redirect("register");
+    }
+});
 
 module.exports = router;
 ```
 
-5º Paso: añadir en la barra de navegacion la opcion de registro (header.ejs)
+5º Paso: añadir en la barra de navegacion la opcion de register (header.ejs)
 ```
 vi views/header.ejs
 // Debajo de login
 <li class="nav-item">
-    <a class="nav-link" href="/registro">Registro</a>
+    <a class="nav-link" href="/register">Register</a>
 </li>
-```
-
-6º Paso: crear pagina html estatica (registro.html)
-```
-<!DOCTYPE html>
-<html>
-<head>
-    <title>login</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-</head>
-<body>
-<nav class="navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Armazón</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                < if (user) { >
-                <li class="nav-item">
-                    <a class="nav-link" href="/restricted">Restricted</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
-                < } else { >
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/registro">Registro</a>
-                </li>
-                < }>
-            </ul>
-            < if (user) { >
-            <div class="d-flex">Welcome <= user.username >!</div>
-            < } >
-        </div>
-    </div>
-</nav>
-<div class="container">
-    <h1><= title ></h1>
-    <form method="post" action="/login">
-        <label>Username:</label>
-        <input type="text" id="user" name="user"><br>
-        <label>Password:</label>
-        <input type="password" id="pass" name="pass"><br>
-        <label>Confirm Password:</label>
-        <input type="password" id="confirmPass" name="confirmPass"><br>
-        <button type="submit">Submit</button>
-    </form>
-</div> <!-- End container -->
-<% if (message) { %>
-<div class="alert alert-primary alert-dismissible" role="alert">
-    <div><%- message %></div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-<% } if (error) { %>
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <div><%- error %></div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-<% } %>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-</body>
-</html>
 ```
 
 ## Para añadir SOCKET.IO a un proyecto.
 
-1º Paso: conectar socket con el servidor (bin/www)
 ```
-// Cargar socket arriba del fichero
-const { Server } = require("socket.io");
+npm install socket.io
+```
 
-// Añadir siguiente codigo debajo de la linea: 
-// Create HTTP server.
-// var server = http.createServer(app);
-const io = new Server(server);
+
+1º Paso: Aceptar conexiones WebSocket a traves de Socket.io (bin/www)
+```
+// Debajo de var server = http.createServer(app)
+const io = require('socket.io')(server);
+
 io.on('connection', (socket) => {
   console.log('a user connected');
-  socket.on('chat', (msg)=>{
-    io.emit('chat', msg);
-  })
 
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  // Cuando recibas un mensaje 'chat message', lo emitirás a todos los clientes.
+  socket.on('chat message', (data) => {
+    io.emit('chat message', data); // Envía el mensaje y el nombre de usuario a todos los clientes
   });
 });
-```
-2º Paso: añadir javascript crear fichero chat.js (public/javascripts/chat.js)
-```
-const socket = io();
-const form = document.getElementById("form");
-const input = document.getElementById("input");
-const messages = document.getElementById("messages");
 
-form.addEventListener('submit', function(e){
-    e.preventDefault();
-    if(input.value){
-        socket.emit("chat",input.value);
-        input.value = "";
-    }
+
+// Cambiar server.listen por esto:
+server.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
-socket.on("chat", (msg) =>{
-    const item = document.createElement("li");
-    item.textContent = msg;
-    messages.appendChild(item);
-    window.scrollTo(0,document.body.scrollHeight);
-});
+
+```
+2º Paso: añadir al header un boton de chat para que le lleve a la pagina solo cuando este logeado el usuario (views/header.ejs)
+```
+// dentro del head
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+// debajo de logout
+<li class="nav-item">
+    <a class="nav-link" href="/chat">Chat</a>
+</li>
 ```
 3º Paso: cargar pagina chat (app.js)
 ```
@@ -292,55 +224,55 @@ app.use('/chat', chatRouter);
 ```
 4º Paso: añadir fichero chat.js (routes/chat.js)
 ```
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('chat', { title: 'Express' });
+  res.render('chat', {user:req.session.user, username:req.session.user.username});
 });
 
 module.exports = router;
+
 ```
 5º Paso: añadir fichero chat.ejs (views/chat.ejs)
 ```
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/chat.css' />
-    <script src="/socket.io/socket.io.js" defer></script>
-    <script src="/javascripts/chat.js" defer></script>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form id="form">
-        <input id="input">
-        <button>Send</button>
-    </form>
-  </body>
-</html>
+<%- include("header", {}) %>
+<h1>CHAT</h1>
+<ul id="messages"></ul>
+<form id="form" action="" class="chat">
+    <input id="input" autocomplete="off" /><button>Send</button>
+</form>
+<script>
+    $(function () {
+        var socket = io();
+        $('form').submit(function(e) {
+            e.preventDefault(); // previene la recarga de la página
+            socket.emit('chat message', { message: $('#input').val(), username: '<%= username %>' });
+            $('#input').val('');
+            return false;
+        });
+        socket.on('chat message', function(data) {
+            $('#messages').append($('<li>').text(data.username + ': ' + data.message));
+        });
+    });
+</script>
+<%- include("footer", {}) %>
 ```
 6º Paso: añadir css chat.css, para poner bonito el chat (public/stylesheets/chat.css)
 ```
-form{
-    background: lightgray;
-    padding: 5px;
-    position: fixed;
-    display: flex;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
+form.chat{
+  background: lightgray;
+  padding: 5px;
+  position: fixed;
+  display: flex;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
 }
 #input{
-    flex-grow: 1;
-}
-#messages{
-    list-style-type: none;
-}
-#messages > li:nth-child(odd){
-    background: lightblue;
+  flex-grow: 1;
 }
 ```
 
@@ -617,6 +549,121 @@ router.delete('/deleteUser', async function(req, res, next) {
 
 module.exports = router;
 ```
+## Funcion middleware
+```
+app.use('/restricted', restricted, restrictedRouter);
+
+function restricted(req, res, next){
+  if(req.session.user){
+    next();
+  } else {
+    res.redirect("login");
+  }
+}
+```
+## Mostrar una tabla dinámica en una página EJS a partir de un JSON
+
+1º Paso: Crea el archivo EJS (pedidos.ejs):
+```
+<!-- pedidos.ejs -->
+<%- include("header", { title: "Pedidos" }) %>
+<h1>Pedidos</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Tamaño</th>
+            <th>Precio</th>
+            <th>Toppings</th>
+            <th>Queso Extra</th>
+            <th>Delivery</th>
+            <th>Cliente</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% for (let i = 0; i < pedidos.length; i++) { %>
+            <tr>
+                <td><%= pedidos[i].tamano %></td>
+                <td><%= pedidos[i].precio %></td>
+                <td><%= pedidos[i].toppings ? pedidos[i].toppings.join(', ') : 'N/A' %></td>
+                <td><%= pedidos[i].queso_extra ? 'Sí' : 'No' %></td>
+                <td><%= pedidos[i].delivery ? 'Sí' : 'No' %></td>
+                <td>
+                    <%= pedidos[i].cliente.nombre %><br>
+                    Teléfono: <%= pedidos[i].cliente.telefono || 'N/A' %><br>
+                    Correo: <%= pedidos[i].cliente.correo || 'N/A' %>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
+<%- include("footer", {}) %>
+```
+
+2º Paso: configurar archivo de rutas (pedidos.js):
+```
+const express = require('express');
+const router = express.Router();
+const pedidosData = require('../database/pedidos.json');
+
+router.get('/', function(req, res, next) {
+    res.render('pedidos', { title: 'Pedidos', pedidos: pedidosData.pedidos });
+});
+
+module.exports = router;
+```
+3º Paso: estructura del archivo JSON (pedidos.json)
+```
+{
+    "pedidos": [
+        {
+            "tamano": "pequeña",
+            "precio": 15.25,
+            "toppings": ["champiñones", "peperoni", "albahaca"],
+            "queso_extra": false,
+            "delivery": true,
+            "cliente": {
+                "nombre": "Pepe Lotas",
+                "telefono": null,
+                "correo": "pepelotas@gmail.com"
+            }
+        },
+        {
+            "tamano": "grande",
+            "precio": 12.43,
+            "toppings": null,
+            "queso_extra": true,
+            "delivery": false,
+            "cliente": {
+                "nombre": "Sara Renovell",
+                "telefono": "6364872023",
+                "correo": null
+            }
+        }
+    ]
+}
+```
+4º Paso: Configura las rutas en tu aplicación principal (app.js)
+```
+const pedidosRouter = require('./routes/pedidos');
+app.use('/pedidos', pedidosRouter);
+```
+
+5º Paso: asegúrate de tener las carpetas y archivos necesarios:
+```
+- views/
+  - pedidos.ejs
+  - header.ejs
+  - footer.ejs
+- routes/
+  - pedidos.js
+- database/
+  - pedidos.json
+- app.js
+- package.json
+```
+
+
+
 
 
 
