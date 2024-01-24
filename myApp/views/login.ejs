@@ -1,0 +1,11 @@
+<%- include("header", {}) %>
+<div class="formulario">
+    <form action="/login" method="post" class="form">
+        <br><label>User Name</label>
+        <br><input placeholder="user name" type="text" name="username" required><br>
+        <br><label>Password</label>
+        <br><input placeholder="password" type="password"  name="password"><br>
+        <br><button type="submit">Sign in</button>
+    </form>
+</div>
+<%- include("footer", {}) %>

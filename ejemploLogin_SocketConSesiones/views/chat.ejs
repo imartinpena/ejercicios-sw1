@@ -1,0 +1,45 @@
+<%- include("header", {}) %>
+<h1>CHAT</h1>
+<ul id="messages"></ul>
+<form id="form" action="" class="chat">
+    <input id="input" autocomplete="off" /><button>Send</button>
+</form>
+<script>
+    const username = "<%= user.username %>";
+    $(function () {
+        const socket = io({ query: `username=${username}`});
+
+        // Manejar los mensajes previos
+        socket.on('previous messages', function(messages) {
+            messages.forEach(function(message) {
+                $('#messages').append($('<li>').text(message.username + ': ' + message.texto));
+            });
+        });
+
+        // Enviar un nuevo mensaje
+        $('#form').submit(function(e) {
+            e.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+            const messageText = $('#input').val();
+            if (messageText.trim().length > 0) {
+                socket.emit('chat message', { text: messageText, username: username });
+                $('#input').val('');
+            }
+            return false;
+        });
+
+        // Recibir un nuevo mensaje
+        socket.on('chat message', function(data) {
+            const time = new Date(data.timestamp);
+            const formattedTime = time.getHours() + ':' + time.getMinutes();
+            // Combina el nombre de usuario, el mensaje y la marca de tiempo en una sola línea
+            $('#messages').append($('<li>').text(data.username + ': ' + data.texto + ' (' + formattedTime + ')'));
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        // Notificar a los que están en el chat quien se ha unido
+        socket.on('user connected', function(message) {
+            $('#messages').append($('<li>').text(message));
+        });
+    });
+</script>
+<%- include("footer", {}) %>

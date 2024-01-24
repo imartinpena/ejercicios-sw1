@@ -1,0 +1,25 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+input[type="email"], input[type="text"],
+input[type="password"] {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  display: none;
+}
+
+

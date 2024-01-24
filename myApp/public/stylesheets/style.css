@@ -1,0 +1,81 @@
+body {
+  padding: 0px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+
+a {
+  color: rgb(164, 160, 160);
+  font-size: small;
+  text-decoration-line: none;
+  font-weight: bold;
+}
+
+.top-bar {
+  padding: 10px 20px;
+  background-color: rgb(20, 20, 93);
+  position: fixed;
+  width: 100%;
+}
+
+h2 {
+  color: rgb(24, 176, 115);
+  text-align: left;
+}
+
+.title{
+  color: rgb(26, 155, 116);
+  font-size: large;
+  font-weight: bold;
+  text-decoration-line: none;
+}
+
+.form{
+  padding-top: 10px;
+}
+
+.formulario{
+  padding-top: 30px;
+  margin-left: 50px;
+  border-color:blue;
+}
+
+h1 {
+  margin: 0px;
+  padding-top: 50px;
+  padding-left: 30px;
+}
+
+p {
+  margin: 0px;
+  padding-top: 10px;
+  padding-left: 30px;
+}
+
+.logout{
+  float: right;
+  padding-right: 50px;
+}
+
+.cookies{ 
+  text-align: center;
+  background-color: rgb(47, 193, 144);
+  position: fixed;
+  width: 100%;
+  padding: 20px;
+  margin-top: 20px;
+  left: 0px;
+  bottom: 0px;
+}
+
+.button{
+  text-decoration: none;
+  color: white;
+  background: transparent;
+  border: none;
+  font-weight: bold;
+}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div class="top-bar">
+      <a class="title" href="/"><%= title %></a>
+      <% if (user) { %>
+        <a href="/">Inicio</a>
+        <a href="restricted">Restricted</a>
+        <a class="logout" href="/logout">logout</a>
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="register">Register</a>
+      <% } %>
+    </div>   

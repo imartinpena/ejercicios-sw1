@@ -1,0 +1,149 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+const { v4: uuidv4 } = require('uuid')
+const sharedsession = require('express-socket.io-session')
+
+const { app, sessionMiddleware } = require('../app');
+var debug = require('debug')('ejemplologin:server');
+var http = require('http');
+const database = require('../database');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+// Integración de Socket.io
+const io = require('socket.io')(server);
+
+const messagesHistory = []; // Almacena los mensajes
+
+io.use(sharedsession(sessionMiddleware, {
+  autoSave:true
+}));
+
+io.on('connection', (socket) => {
+  const sessionCreatedAt = socket.handshake.session.sessionCreatedAt;
+  const filteredMessages = messagesHistory.filter(message => message.timestamp >= sessionCreatedAt);
+  // Verifica si el usuario tiene una sesión existente
+  console.log('UserID:', socket.handshake.session.userID);
+  if (!socket.handshake.session.userID) {
+    // Asigna un userID único a esta sesión
+    socket.handshake.session.userID = uuidv4();
+    socket.handshake.session.sessionCreatedAt = Date.now();
+    socket.handshake.session.save();
+  } else {
+    // Envía el historial de mensajes al usuario que se reconecta
+    socket.emit('previous messages', filteredMessages);
+  }
+  const username = socket.handshake.query.username;
+  console.log(`${username} se ha conectado`);
+
+  // Emitir un mensaje a todos los clientes excepto al que se acaba de conectar
+  socket.broadcast.emit('user connected', `${username} se ha unido al chat`);
+
+  // Cuando recibas un mensaje 'chat message', lo emitirás a todos los clientes y lo guardarás en el historial.
+  socket.on('chat message', (msg) => {
+    const messageWithTimestamp = {
+      username: msg.username,
+      texto: msg.text,
+      timestamp: Date.now()
+    };
+    //console.log(msg.text);
+    messagesHistory.push(messageWithTimestamp); // Guardar mensaje en el historial.
+    io.emit('chat message', messageWithTimestamp);
+  });
+
+  /*
+  // Enviar historial de mensajes al cliente que se acaba de conectar.
+  socket.emit('chat history', messagesHistory);
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+   */
+});
+
+
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+

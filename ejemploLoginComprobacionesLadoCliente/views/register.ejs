@@ -1,0 +1,15 @@
+<%- include("header", {}) %>
+<h1>Register</h1>
+<form id="registerForm" method="POST" action="/register">
+  <label for="name">Username: </label>
+  <input type="text" name="user" id="name" required>
+  <div class="error" id="errorName"></div><br>
+  <label for="email">Email: </label>
+  <input type="email" name="email" id="email" required>
+  <div class="error" id="errorEmail"></div><br>
+  <label for="password">Password: </label>
+  <input type="password" name="pass" id="password" required>
+  <div class="error" id="errorPassword"></div><br>
+  <button type="submit">Submit</button>
+</form>
+<%- include("footer", {}) %>
